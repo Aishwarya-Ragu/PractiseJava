@@ -1,5 +1,6 @@
 package tree;
 
+
 import java.util.*;
 
 public class LevelOrderTraversal {
@@ -11,20 +12,28 @@ public class LevelOrderTraversal {
         pt.insert();
         //pt.printUsingQueue();
         //pt.printLevelOrder();
-        pt.zigzagLevelOrder(pt.root);
+        //pt.zigzagLevelOrder(pt.root);
+        //pt.findTilt(pt.root);
+        pt.maxAncestorDiff(pt.root);
     }
     private Node insert() {
-        root = new Node(1);
-        Node second = new Node(2);
-        Node third = new Node(3);
+        root = new Node(8);
+        Node second = new Node(3);
+        Node third = new Node(10);
         root.left = second;
         root.right = third;
-        Node four = new Node(4);
-        Node five = new Node(5);
-        Node six = new Node(6);
+        Node four = new Node(1);
+        Node five = new Node(6);
         second.left = four;
         second.right = five;
-        third.left = six;
+        Node six = new Node(14);
+        third.right = six;
+        Node seven = new Node(4);
+        Node eight = new Node(7);
+        Node nine = new Node(13);
+        five.left =seven;
+        five.right = eight;
+        six.right = nine;
         return root;
     }
 
@@ -141,4 +150,48 @@ public class LevelOrderTraversal {
 
 
     }
+
+    class Answer{
+        int total;
+        Answer(){ }
+    }
+
+    public int findTilt(Node root) {
+        int total = 0;
+        Answer answer = new Answer();
+        tiltRecursive(root,answer);
+        return answer.total;
+    }
+
+    public int tiltRecursive(Node root,Answer answer){
+        if(root == null)
+            return 0;
+        int left = tiltRecursive(root.left,answer);
+        int right = tiltRecursive(root.right,answer);
+        answer.total = answer.total + Math.abs(left-right);
+        return root.val+left+right;
+    }
+
+    int maxDiff = Integer.MIN_VALUE;
+    public int maxAncestorDiff(Node root) {
+        Set<Node> set = new HashSet<>();
+        set.add(root);
+        maxAncestorDiffRecurse(root,set);
+        return maxDiff;
+    }
+
+    public void maxAncestorDiffRecurse(Node root,Set<Node> set){
+        if(root!=null){
+            for(Node node:set){
+                int max = Math.abs(root.val-node.val);
+                maxDiff = Math.max(max,maxDiff);
+            }
+            set.add(root);
+            maxAncestorDiffRecurse(root.left,set);
+            set.remove(set.size()-1);
+            maxAncestorDiffRecurse(root.right,set);
+            set.remove(set.size()-1);
+        }
+    }
+
 }
